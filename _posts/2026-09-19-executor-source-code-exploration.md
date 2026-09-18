@@ -4,7 +4,7 @@ categories:
   - Code
 ---
 
-最近看到一個開源專案（今年度被YC錄取），叫 [https://executor.sh/s-organization-qet2](Executor)。該專案的核心想法是：整合不同的 Agent (Claude Code, Codex) 到統一的 MCP server，支援不同的 API (openAPI, graphQL, MCP)，藉此就不用每個 Agent 重複設定一份憑證。
+最近看到一個開源專案（今年度被YC錄取），叫 [Executor](https://executor.sh/s-organization-qet2)  。該專案的核心想法是：整合不同的 Agent (Claude Code, Codex) 到統一的 MCP server，支援不同的 API (openAPI, graphQL, MCP)，藉此就不用每個 Agent 重複設定一份憑證。
 整體想法蠻酷的，所以我把整個專案fork下來，當作練手。
 整個專案大約有20萬行代碼，並且極有可能大量由agent產生的，因此我不打算逐行去閱讀（那可能我會先瘋掉），所以我會嘗試藉由 Claude code 來理解整個專案。
 
@@ -20,15 +20,15 @@ The pattern where an LLM writes TypeScript/JavaScript that calls into a pre-regi
 
 實作參考：
 
-- `createExecutorMcpServer` 函式本體（到 `new McpServer(...)` 為止）：[packages/hosts/mcp/src/tool-server.ts:1111-1230](https://github.com/cjumeow/executor/blob/eaa1f3a57ffff88aede8e83783ea7ed4471aec1f/packages/hosts/mcp/src/tool-server.ts#L1111-L1230)
-- `ExecutorMcpServerConfig` 型別定義（config 二選一：`ExecutionEngineConfig` 或現成的 `engine`）：[packages/hosts/mcp/src/tool-server.ts:275-279](https://github.com/cjumeow/executor/blob/eaa1f3a57ffff88aede8e83783ea7ed4471aec1f/packages/hosts/mcp/src/tool-server.ts#L275-L279)
-- `registerTool("execute", ...)`：[packages/hosts/mcp/src/tool-server.ts:1551-1563](https://github.com/cjumeow/executor/blob/eaa1f3a57ffff88aede8e83783ea7ed4471aec1f/packages/hosts/mcp/src/tool-server.ts#L1551-L1563)
-- `registerTool("skills", ...)`：[packages/hosts/mcp/src/tool-server.ts:1566-1591](https://github.com/cjumeow/executor/blob/eaa1f3a57ffff88aede8e83783ea7ed4471aec1f/packages/hosts/mcp/src/tool-server.ts#L1566-L1591)
-- `registerTool("resume", ...)`（model 模式 / browser 模式兩種版本）：[packages/hosts/mcp/src/tool-server.ts:1599-1644](https://github.com/cjumeow/executor/blob/eaa1f3a57ffff88aede8e83783ea7ed4471aec1f/packages/hosts/mcp/src/tool-server.ts#L1599-L1644)
-- `skills` 文件內容本體（`execute` / `create-artifact` / `artifact-style` 三篇 markdown）：[packages/core/execution/src/skills.ts:16-657](https://github.com/cjumeow/executor/blob/eaa1f3a57ffff88aede8e83783ea7ed4471aec1f/packages/core/execution/src/skills.ts#L16-L657)
-- `execute` 標準呼叫格式 `tools.<integration>.<owner>.<connection>.<tool>(args)` 的規則定義：[packages/core/execution/src/skills.ts:57](https://github.com/cjumeow/executor/blob/eaa1f3a57ffff88aede8e83783ea7ed4471aec1f/packages/core/execution/src/skills.ts#L57)
-- session 真正建立的地方（`server.connect(transport)`，stdio 範例）：[apps/local/src/mcp.ts:310-313](https://github.com/cjumeow/executor/blob/eaa1f3a57ffff88aede8e83783ea7ed4471aec1f/apps/local/src/mcp.ts#L310-L313)
-- "code mode" 一詞的專案自身定義：[packages/kernel/core/README.md:3](https://github.com/cjumeow/executor/blob/eaa1f3a57ffff88aede8e83783ea7ed4471aec1f/packages/kernel/core/README.md#L3)
+- `createExecutorMcpServer` 函式本體（到 `new McpServer(...)` 為止）：[packages/hosts/mcp/src/tool-server.ts:1111-1230](packages/hosts/mcp/src/tool-server.ts#L1111-L1230)
+- `ExecutorMcpServerConfig` 型別定義（config 二選一：`ExecutionEngineConfig` 或現成的 `engine`）：[packages/hosts/mcp/src/tool-server.ts:275-279](packages/hosts/mcp/src/tool-server.ts#L275-L279)
+- `registerTool("execute", ...)`：[packages/hosts/mcp/src/tool-server.ts:1551-1563](packages/hosts/mcp/src/tool-server.ts#L1551-L1563)
+- `registerTool("skills", ...)`：[packages/hosts/mcp/src/tool-server.ts:1566-1591](packages/hosts/mcp/src/tool-server.ts#L1566-L1591)
+- `registerTool("resume", ...)`（model 模式 / browser 模式兩種版本）：[packages/hosts/mcp/src/tool-server.ts:1599-1644](packages/hosts/mcp/src/tool-server.ts#L1599-L1644)
+- `skills` 文件內容本體（`execute` / `create-artifact` / `artifact-style` 三篇 markdown）：[packages/core/execution/src/skills.ts:16-657](packages/core/execution/src/skills.ts#L16-L657)
+- `execute` 標準呼叫格式 `tools.<integration>.<owner>.<connection>.<tool>(args)` 的規則定義：[packages/core/execution/src/skills.ts:57](packages/core/execution/src/skills.ts#L57)
+- session 真正建立的地方（`server.connect(transport)`，stdio 範例）：[apps/local/src/mcp.ts:310-313](apps/local/src/mcp.ts#L310-L313)
+- "code mode" 一詞的專案自身定義：[packages/kernel/core/README.md:3](packages/kernel/core/README.md#L3)
 
 延續前面，把 code 丟進沙盒之前，先製造一個 invoker（透過 `makeFullInvoker`）
 ```typescript
@@ -49,15 +49,15 @@ fiber = yield* Effect.forkDetach(
 
 實作參考：
 
-- `makeFullInvoker` 定義（外層包裝：攔截 `search`/`executor.integrations.list`/`describe.tool`，其餘轉給內層）：[packages/core/execution/src/engine.ts:317-321](https://github.com/cjumeow/executor/blob/eaa1f3a57ffff88aede8e83783ea7ed4471aec1f/packages/core/execution/src/engine.ts#L317-L321)
-- `makeFullInvoker` 呼叫 + `forkDetach` 進沙盒（就是上面兩段 code 的原文）：[packages/core/execution/src/engine.ts:697-704](https://github.com/cjumeow/executor/blob/eaa1f3a57ffff88aede8e83783ea7ed4471aec1f/packages/core/execution/src/engine.ts#L697-L704)
-- 沙盒內把 `tools.xxx.yyy(...)` 轉成 `invoke({ path, args })` 的 JS Proxy（以 quickjs runtime 為例，其他 runtime 各自有一份）：[packages/kernel/runtime-quickjs/src/index.ts:230](https://github.com/cjumeow/executor/blob/eaa1f3a57ffff88aede8e83783ea7ed4471aec1f/packages/kernel/runtime-quickjs/src/index.ts#L230)
-- `invoke({ path, args })` 本體、三個分支的起點：[packages/core/execution/src/engine.ts:324](https://github.com/cjumeow/executor/blob/eaa1f3a57ffff88aede8e83783ea7ed4471aec1f/packages/core/execution/src/engine.ts#L324)
-  - `path === "search"` 分支：[engine.ts:325-377](https://github.com/cjumeow/executor/blob/eaa1f3a57ffff88aede8e83783ea7ed4471aec1f/packages/core/execution/src/engine.ts#L325-L377)
-  - `path === "executor.integrations.list"` 分支：[engine.ts:378](https://github.com/cjumeow/executor/blob/eaa1f3a57ffff88aede8e83783ea7ed4471aec1f/packages/core/execution/src/engine.ts#L378)（起點）
-  - `path === "describe.tool"` 分支：[engine.ts:425](https://github.com/cjumeow/executor/blob/eaa1f3a57ffff88aede8e83783ea7ed4471aec1f/packages/core/execution/src/engine.ts#L425)（起點）
-- 三個分支都沒中，轉給內層 `base.invoke({ path, args })`（即 `makeExecutorToolInvoker`，真正跨出沙盒、呼叫 `executor.execute` 的地方）：[engine.ts:460](https://github.com/cjumeow/executor/blob/eaa1f3a57ffff88aede8e83783ea7ed4471aec1f/packages/core/execution/src/engine.ts#L460) / 定義於 [tool-invoker.ts:307](https://github.com/cjumeow/executor/blob/eaa1f3a57ffff88aede8e83783ea7ed4471aec1f/packages/core/execution/src/tool-invoker.ts#L307)
-- `executor.execute` 的 6 道安檢流程入口：[packages/core/sdk/src/executor.ts:6231-6291](https://github.com/cjumeow/executor/blob/eaa1f3a57ffff88aede8e83783ea7ed4471aec1f/packages/core/sdk/src/executor.ts#L6231-L6291)
+- `makeFullInvoker` 定義（外層包裝：攔截 `search`/`executor.integrations.list`/`describe.tool`，其餘轉給內層）：[packages/core/execution/src/engine.ts:317-321](packages/core/execution/src/engine.ts#L317-L321)
+- `makeFullInvoker` 呼叫 + `forkDetach` 進沙盒（就是上面兩段 code 的原文）：[packages/core/execution/src/engine.ts:697-704](packages/core/execution/src/engine.ts#L697-L704)
+- 沙盒內把 `tools.xxx.yyy(...)` 轉成 `invoke({ path, args })` 的 JS Proxy（以 quickjs runtime 為例，其他 runtime 各自有一份）：[packages/kernel/runtime-quickjs/src/index.ts:230](packages/kernel/runtime-quickjs/src/index.ts#L230)
+- `invoke({ path, args })` 本體、三個分支的起點：[packages/core/execution/src/engine.ts:324](packages/core/execution/src/engine.ts#L324)
+  - `path === "search"` 分支：[engine.ts:325-377](packages/core/execution/src/engine.ts#L325-L377)
+  - `path === "executor.integrations.list"` 分支：[engine.ts:378](packages/core/execution/src/engine.ts#L378)（起點）
+  - `path === "describe.tool"` 分支：[engine.ts:425](packages/core/execution/src/engine.ts#L425)（起點）
+- 三個分支都沒中，轉給內層 `base.invoke({ path, args })`（即 `makeExecutorToolInvoker`，真正跨出沙盒、呼叫 `executor.execute` 的地方）：[engine.ts:460](packages/core/execution/src/engine.ts#L460) / 定義於 [tool-invoker.ts:307](packages/core/execution/src/tool-invoker.ts#L307)
+- `executor.execute` 的 6 道安檢流程入口：[packages/core/sdk/src/executor.ts:6231-6291](packages/core/sdk/src/executor.ts#L6231-L6291)
 
 這相關流程放在 `packages/core/sdk/src/executor.ts`，在真正打出api之前，會先做去fetch這支工具的相關資訊，例如使用者設定的 policyRules，並確認該操作是否有需要觸發使用者確認 (enforce approval)，確認後才去做 crendential resolution，把對應的 token 撈出來。
 
