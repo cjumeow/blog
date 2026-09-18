@@ -1,6 +1,6 @@
 # Site Settings
 locale                   : "en"
-title                    : "My Blog"
+title                    : "I'm Guanjun"
 title_separator          : "-"
 subtitle                 : "Personal Site"
 name                     : "Andrew"
@@ -10,7 +10,7 @@ baseurl                  : ""
 repository               : "cjumeow/blog"
 teaser                   :
 logo                     :
-masthead_title           : "My Blog"
+masthead_title           : "我是冠均"
 
 # Build settings
 markdown                 : kramdown
