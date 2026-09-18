@@ -1,0 +1,75 @@
+# Site Settings
+locale                   : "zh-TW"
+title                    : "My Blog"
+title_separator          : "-"
+subtitle                 : "個人網站"
+name                     : "Chris"
+description              : "個人網站與部落格"
+url                      : "" # 部署到 Vercel 後填上正式網址，例如 https://blog.vercel.app
+baseurl                  : ""
+repository               : "cjumeow/blog"
+teaser                   :
+logo                     :
+masthead_title           : "My Blog"
+
+# Build settings
+markdown                 : kramdown
+remote_theme             :
+theme                    : minimal-mistakes-jekyll
+minimal_mistakes_skin    : "default"
+
+plugins:
+  - jekyll-paginate
+  - jekyll-sitemap
+  - jekyll-feed
+  - jekyll-include-cache
+
+# Site Author
+author:
+  name             : "Chris"
+  avatar           :
+  bio              : "在這裡寫點什麼介紹自己"
+  location         :
+  links:
+    - label: "GitHub"
+      icon: "fab fa-fw fa-github"
+      url: "https://github.com/cjumeow"
+
+# Site Footer
+footer:
+  links:
+    - label: "GitHub"
+      icon: "fab fa-fw fa-github"
+      url: "https://github.com/cjumeow"
+
+defaults:
+  # _posts
+  - scope:
+      path: ""
+      type: posts
+    values:
+      layout: single
+      author_profile: true
+      read_time: true
+      comments: false
+      share: true
+      related: true
+  # _pages
+  - scope:
+      path: "_pages"
+      type: pages
+    values:
+      layout: single
+      author_profile: true
+
+category_archive:
+  type: liquid
+  path: /categories/
+tag_archive:
+  type: liquid
+  path: /tags/
+
+paginate: 5
+paginate_path: /page:num/
+
+include: ["_pages"]

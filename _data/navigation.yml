@@ -1,0 +1,5 @@
+main:
+  - title: "首頁"
+    url: /
+  - title: "關於我"
+    url: /about/
