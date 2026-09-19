@@ -14,9 +14,10 @@ categories:
 
 Agent（Claude Code、Codex...）要用 executor 的第一步，是連上一個 MCP server。這個 server 是用 `createExecutorMcpServer` 來組裝一台 server，內部透過 `registerTool` 註冊了execute, skill, resume（核心三個,另外還有依設定開關的 artifact 和 search 相關工具）。建立 session 後，Agent 會透過 MCP 所定義的 `tools/list`、`tools/call` 來呼叫這些工具。整體架構是 code mode，當 agent 透過 skills 定義好的標準格式，例如：`tools.github.repos.delete(...)`，會將這些 code 丟到 `execute` function 裡面。
 
-PS: code mode
-
-The pattern where an LLM writes TypeScript/JavaScript that calls into a pre-registered set of tools, executed in a sandbox
+> **PS:** code mode
+>
+> The pattern where an LLM writes TypeScript/JavaScript that calls into a pre-registered set of tools, executed in a sandbox.
+{: .notice--info}
 
 實作參考：
 
